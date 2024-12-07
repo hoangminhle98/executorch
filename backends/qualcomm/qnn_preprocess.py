@@ -67,6 +67,8 @@ class QnnBackend(BackendDetails):
         for node in pass_result.graph_module.graph.nodes:
             if node.op == "call_function":
                 logger.info(f"Visiting: {node}, {node.target.__name__}")
+                if node.target.__name__ == "aten.index_put.default":
+                    logger.info("lfq: node ", node.args)
                 if node.target.__name__ in node_visitors:
                     py_op_wrapper = node_visitors[node.target.__name__].define_node(
                         node, nodes_to_wrappers
