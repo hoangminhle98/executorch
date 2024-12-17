@@ -14,15 +14,18 @@ from executorch.backends.arm.operators.node_visitor import (
 )
 from executorch.backends.arm.tosa_mapping import TosaArg
 from executorch.backends.arm.tosa_specification import TosaSpecification
+from executorch.backends.arm.tosa_utils import tosa_shape
 from serializer.tosa_serializer import TosaOp
 
 
 @register_node_visitor
-class ReciprocalVisitor_080_MI(NodeVisitor):
-    target = "aten.reciprocal.default"
+class DivVisitor(NodeVisitor):
+    target = "aten.div.Tensor"
 
-    # BI case should be handled by op_table
-    tosa_specs = [TosaSpecification.create_from_string("TOSA-0.80+MI")]
+    # Only supported for MI
+    tosa_specs = [
+        TosaSpecification.create_from_string("TOSA-0.80+MI"),
+    ]
 
     def __init__(self, *args):
         super().__init__(*args)
@@ -33,6 +36,16 @@ class ReciprocalVisitor_080_MI(NodeVisitor):
         tosa_graph: ts.TosaSerializer,
         inputs: List[TosaArg],
         output: TosaArg,
+        is_quant_node: bool,
     ) -> None:
-        assert inputs[0].dtype == output.dtype == ts.DType.FP32
-        tosa_graph.addOperator(TosaOp.Op().RECIPROCAL, [inputs[0].name], [output.name])
+        # FP32 Div is implemented as output=x/y -> output=x*1/y e.g. MUL(x,RECIPROCAL(y))
+        recip = tosa_graph.addIntermediate(
+            tosa_shape(inputs[1].shape, inputs[1].dim_order), inputs[1].dtype
+        )
+        tosa_graph.addOperator(TosaOp.Op().RECIPROCAL, [inputs[1].name], [recip.name])
+
+        attr = ts.TosaSerializerAttribute()
+        attr.MulAttribute(0)
+        tosa_graph.addOperator(
+            TosaOp.Op().MUL, [inputs[0].name, recip.name], [output.name], attr
+        )

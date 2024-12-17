@@ -30,7 +30,7 @@ class MulVisitor_080_BI(NodeVisitor):
     target = "aten.mul.Tensor"
 
     tosa_specs = [
-        TosaSpecification.create_from_string("TOSA-0.80.0+BI"),
+        TosaSpecification.create_from_string("TOSA-0.80+BI"),
     ]
 
     def define_node(
@@ -87,7 +87,7 @@ class MulVisitor_080_MI(MulVisitor_080_BI):
     # inheriting 'target' from BI class
 
     tosa_specs = [
-        TosaSpecification.create_from_string("TOSA-0.80.0+MI"),
+        TosaSpecification.create_from_string("TOSA-0.80+MI"),
     ]
 
     def define_node(

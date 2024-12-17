@@ -26,7 +26,7 @@ class SubVisitor_080_BI(NodeVisitor):
     target = "aten.sub.Tensor"
 
     tosa_specs = [
-        TosaSpecification.create_from_string("TOSA-0.80.0+BI"),
+        TosaSpecification.create_from_string("TOSA-0.80+BI"),
     ]
 
     def __init__(self, *args):
@@ -39,7 +39,7 @@ class SubVisitor_080_BI(NodeVisitor):
         inputs: List[TosaArg],
         output: TosaArg,
     ) -> None:
-        # Specification (0.80.0) states that input and output types
+        # Specification (0.80) states that input and output types
         # should all be the same
         assert inputs[0].dtype == inputs[1].dtype == output.dtype
         # Handle int8 (quantized) and int32
@@ -83,7 +83,7 @@ class SubVisitor_080_MI(SubVisitor_080_BI):
     # inheriting 'target' from BI class
 
     tosa_specs = [
-        TosaSpecification.create_from_string("TOSA-0.80.0+MI"),
+        TosaSpecification.create_from_string("TOSA-0.80+MI"),
     ]
 
     def __init__(self, *args):
@@ -96,7 +96,7 @@ class SubVisitor_080_MI(SubVisitor_080_BI):
         inputs: List[TosaArg],
         output: TosaArg,
     ) -> None:
-        # Specification (0.80.0) states that input and output types
+        # Specification (0.80) states that input and output types
         # should all be the same
         assert inputs[0].dtype == inputs[1].dtype == output.dtype
 

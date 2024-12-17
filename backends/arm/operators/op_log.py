@@ -23,7 +23,7 @@ class LogVisitor(NodeVisitor):
     target = "aten.log.default"
 
     # BI case should be handled by op_table
-    tosa_specs = [TosaSpecification.create_from_string("TOSA-0.80.0+MI")]
+    tosa_specs = [TosaSpecification.create_from_string("TOSA-0.80+MI")]
 
     def __init__(self, *args):
         super().__init__(*args)
